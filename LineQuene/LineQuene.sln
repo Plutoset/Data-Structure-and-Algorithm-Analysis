@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineQuene", "LineQuene\LineQuene.csproj", "{A91E9467-6677-4C36-8D5B-55D4236C7DB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A91E9467-6677-4C36-8D5B-55D4236C7DB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91E9467-6677-4C36-8D5B-55D4236C7DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91E9467-6677-4C36-8D5B-55D4236C7DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91E9467-6677-4C36-8D5B-55D4236C7DB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0446A282-E562-4174-94B2-C6B3E4938ACA}
+	EndGlobalSection
+EndGlobal
