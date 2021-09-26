@@ -2,7 +2,7 @@ using System;
 
 namespace LineQuene
 {
-        class Node<T>
+    class Node<T>
     {
         T data;
         Node<T> next;
@@ -59,7 +59,7 @@ namespace LineQuene
                 }
                 nowNode = nowNode.Next;
             }
-            if (i < index)
+            if (i < index || index < 1)
             {
                 Console.WriteLine("Input index out of range!");
             }
@@ -130,7 +130,7 @@ namespace LineQuene
                     }
                     nowNode = nowNode.Next;
                 }
-                if (i < index)
+                if (i > index || index < 1)
                 {
                     Console.WriteLine("Input index out of range!");
                 }
@@ -184,13 +184,13 @@ namespace LineQuene
                     }
                     nowNode = nowNode.Next;
                 }
-                if (i < index-1)
+                if (i < index-1 || index < 1)
                 {
                     Console.WriteLine("Input index out of range!");
                 }
                 
             }
-            //Console.WriteLine($"font data {font.Data} rear data {rear.Data}");
+            Console.WriteLine($"font data {font.Data} rear data {rear.Data}");
         }
         /// <summary>
         /// 删除index处的节点，如果index超出范围则console报错并且不执行操作
@@ -226,7 +226,7 @@ namespace LineQuene
                     }
                     nowNode = nowNode.Next;
                 }
-                if (i < index - 1)
+                if (i < index - 1|| index < 1)
                 {
                     Console.WriteLine("Input index out of range!");
                 }
