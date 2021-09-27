@@ -15,7 +15,7 @@ namespace LineQuene
         public Point()
         {
         }
-        public Point(double x,double y)
+        public Point(double x, double y)
         {
             this.x = x;
             this.y = y;
@@ -86,31 +86,27 @@ namespace LineQuene
             if (font.Data == null)
             {
                 Console.WriteLine("LinkQuene already empty!");
-                return default(Point);
+                return default;
             }
-            else
+            if (nowNode.Data.Equals(data))
             {
+                return nowNode.Data;
+            }
+            nowNode = nowNode.Next;
+            while (nowNode != font)
+            {
+                i++;
                 if (nowNode.Data.Equals(data))
                 {
                     return nowNode.Data;
                 }
                 nowNode = nowNode.Next;
-                while (nowNode != font)
-                {
-                    i++;
-                    if (nowNode.Data.Equals(data))
-                    {
-                        return nowNode.Data;
-                    }
-                    nowNode = nowNode.Next;
-                }
-
-                Console.WriteLine("Input index out of range!");
-                return default(Point);
-
             }
+            Console.WriteLine("Input Point not in List!");
+            return default;
 
         }
+
         /// <summary>
         /// 循环打印链式表中的所有元素
         /// </summary>
@@ -118,6 +114,11 @@ namespace LineQuene
         {
             Node<Point> pn = font;    
             int j = 1;
+            if (pn.Data == null)
+            {
+                Console.WriteLine("Error! No point detected!");
+                return;
+            }
             Console.WriteLine($"point{j}, X {pn.Data.X} Y {pn.Data.Y}");
             pn = pn.Next;
             while (pn != font && pn != null)
@@ -136,25 +137,35 @@ namespace LineQuene
         {
             Node<Point> nowNode = font;
             int i = 1;
+            if (index < 1)
+            {
+                Console.WriteLine("Input index out of range!");
+                return default;
+            }
             if (i == index)
             {
                 return nowNode.Data;
             }
             nowNode = nowNode.Next;
+            if(nowNode == null)
+            {
+                Console.WriteLine("Error! No point in polygon!");
+                return default;
+            }
             while (nowNode != font)
             {
-                i++;
                 if (i == index)
                 {
                     return nowNode.Data;
                 }
+                i++;
                 nowNode = nowNode.Next;
             }
             if (i > index || index < 1)
             {
                 Console.WriteLine("Input index out of range!");
             }
-            return default(Point);
+            return default;
         }
         /// <summary>
         /// 判空
@@ -242,27 +253,25 @@ namespace LineQuene
                 if (font.Data == null)
                 {
                     Console.WriteLine("Invalid Polygon!");
+                    return;
                 }
-                else
+                Node<Point> newNode = font.Next;
+                if (newNode.Next == font)
                 {
-                    Node<Point> newNode = font.Next;
-                    if (newNode.Next == font)
-                    {
-                        font = newNode;
-                        font.Next = null;
-                        rear = font;
-                        return;
-                    }
-                    Node<Point> store = font;
-                    font = font.Next;
-                    nowNode = nowNode.Next;
-                    while (nowNode.Next != store)
-                    {
-                        nowNode = nowNode.Next;
-                    }
-                    nowNode.Next = newNode;
-                    rear = nowNode;
+                    font = newNode;
+                    font.Next = null;
+                    rear = font;
+                    return;
                 }
+                Node<Point> store = font;
+                font = font.Next;
+                nowNode = nowNode.Next;
+                while (nowNode.Next != store)
+                {
+                    nowNode = nowNode.Next;
+                }
+                nowNode.Next = newNode;
+                rear = nowNode;
                 return;
             }
             else
@@ -308,22 +317,24 @@ namespace LineQuene
                 nowNode = nowNode.Next;
                 i++;
             }
-            if (i < 3)
+            switch (i)
             {
-                Console.WriteLine("Invalid Polygon!");
-            }
-            else
-            {
-                nowNode = font;
-                while (true)
-                {
-                    area += 0.5 * Math.Abs(nowNode.Next.Data.Y + nowNode.Data.Y) * (nowNode.Next.Data.X - nowNode.Data.X);
-                    nowNode = nowNode.Next;
-                    if (nowNode == font)
+                case < 3:
+                    Console.WriteLine("Invalid Polygon!");
+                    break;
+                default:
+                    nowNode = font;
+                    while (true)
                     {
-                        break;
+                        area += 0.5 * Math.Abs(nowNode.Next.Data.Y + nowNode.Data.Y) * 
+                                                (nowNode.Next.Data.X - nowNode.Data.X);
+                        nowNode = nowNode.Next;
+                        if (nowNode == font)
+                        {
+                            break;
+                        }
                     }
-                }
+                    break;
             }
             return area;
         }
@@ -341,24 +352,24 @@ namespace LineQuene
                 nowNode = nowNode.Next;
                 i++;
             }
-            if (i < 3)
+            switch (i)
             {
-                Console.WriteLine("Invalid Polygon!");
-            }
-            else
-            {
-                nowNode = font;
-                while (true)
-                {
-                    per += Math.Sqrt(Math.Pow(nowNode.Next.Data.Y - nowNode.Data.Y,2) +
-                        Math.Pow(nowNode.Next.Data.X - nowNode.Data.X, 2)
-                        );
-                    nowNode = nowNode.Next;
-                    if (nowNode == font)
+                case < 3:
+                    Console.WriteLine("Invalid Polygon!");
+                    break;
+                default:
+                    nowNode = font;
+                    while (true)
                     {
-                        break;
+                        per += Math.Sqrt(Math.Pow(nowNode.Next.Data.Y - nowNode.Data.Y, 2) +
+                                                    Math.Pow(nowNode.Next.Data.X - nowNode.Data.X, 2));
+                        nowNode = nowNode.Next;
+                        if (nowNode == font)
+                        {
+                            break;
+                        }
                     }
-                }
+                    break;
             }
             return per;
         }

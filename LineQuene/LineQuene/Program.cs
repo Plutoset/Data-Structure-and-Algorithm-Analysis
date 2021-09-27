@@ -48,7 +48,8 @@ namespace LineQuene
             PolygonPoints<Point> pg = new PolygonPoints<Point>();
             Console.WriteLine("LinkQuene init");
             Console.WriteLine($"LinkQuene is empty: {pg.IsEmpty()}");
-
+            pg.Loop();
+            pg.Get(2);
             Point point1 = new Point(1, 1);
             Point point2 = new Point(1, 2);
             Point point3 = new Point(3, 2);

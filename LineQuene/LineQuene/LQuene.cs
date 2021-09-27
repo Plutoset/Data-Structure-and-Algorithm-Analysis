@@ -12,7 +12,7 @@ namespace LineQuene
         /// </summary>
         public Node()
         {
-            this.Data = default(T);
+            this.Data = default;
             this.Next = null;
         }
 
@@ -78,7 +78,7 @@ namespace LineQuene
             if (font.Data == null)
             {
                 Console.WriteLine("LinkQuene already empty!");
-                return default(T);
+                return default;
             }
             else
             {
@@ -93,7 +93,7 @@ namespace LineQuene
                 }
 
                 Console.WriteLine("Input index out of range!");
-                return default(T);
+                return default;
 
             }
 
@@ -134,7 +134,7 @@ namespace LineQuene
                 {
                     Console.WriteLine("Input index out of range!");
                 }
-            return default(T);
+            return default;
         }
         /// <summary>
         /// 判空
