@@ -54,6 +54,7 @@ namespace VectorCross
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
+        [Obsolete]
         public Point Find(Point point)
         {
             LoopNode<Point> nowNode = font;
@@ -82,22 +83,41 @@ namespace VectorCross
         /// <summary>
         /// 循环打印链式表中的所有元素
         /// </summary>
-        public void Loop()
+        public override string ToString()
         {
+            //LoopNode<Point> pn = font;
+            //int j = 1;
+            //if (pn.Data == null)
+            //{
+            //    Console.WriteLine("Error! No point detected!");
+            //    return;
+            //}
+            //while (pn.Visit ==false)
+            //{
+            //    Console.WriteLine($"point{j}, X {pn.Data.X} Y {pn.Data.Y}");
+            //    pn.Visit = true;
+            //    pn = pn.Next;
+            //    j++;
+            //}
             LoopNode<Point> pn = font;
-            int j = 1;
+            int j = 0;
             if (pn.Data == null)
             {
-                Console.WriteLine("Error! No point detected!");
-                return;
+                return "No Points in this Polygon.";
             }
-            while (pn.Visit ==false)
+            else
             {
-                Console.WriteLine($"point{j}, X {pn.Data.X} Y {pn.Data.Y}");
-                pn.Visit = true;
-                pn = pn.Next;
-                j++;
+                StringBuilder stringBuilder = new StringBuilder();
+                while (pn.Visit == false)
+                {
+                    j++;
+                    stringBuilder.AppendLine($"Point{j}, X {pn.Data.X} Y {pn.Data.Y}");
+                    pn = pn.Next;
+                }
+                Reflesh();
+                return stringBuilder.ToString();
             }
+
         }
         /// <summary>
         /// 找出并打印index位置的元素，如果超出范围则console报错并且返回null值

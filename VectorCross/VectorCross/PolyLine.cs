@@ -57,7 +57,7 @@ namespace VectorCross
         /// 在PolyLine的末尾添加线段
         /// </summary>
         /// <param name="point"></param>
-        public void AddPoint(Point point)
+        public void Add(Point point)
         {
             this.Data.Add(point);
         }

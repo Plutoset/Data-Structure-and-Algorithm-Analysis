@@ -1,4 +1,8 @@
 using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Collections;
+using System.Threading;
 
 namespace VectorCross
 {
@@ -16,36 +20,13 @@ namespace VectorCross
             font = new Node<T>();
             rear = font;
         }
-        // <summary>
-        /// 在index处修改值
-        /// </summary>
-        /// <param name="data"></param>
-        public void Modify(T data, int index)
-        {
-            Node<T> nowNode = font;
-            int i = 0;
-            while (nowNode != null)
-            {
-                i++;
-                if (i == index)
-                {
-                nowNode.Data = data;
-                    break;
-                }
-                nowNode = nowNode.Next;
-            }
-            if (i < index || index < 1)
-            {
-                Console.WriteLine("Input index out of range!");
-            }
-        }
-
         /// <summary>
         /// WARNING UNCOMPLETED FUNCTION
         /// 通过内容检索并且返回值并没有什么意思，就不写了
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Obsolete]
         public T Find(T data)
         {
             Node<T> nowNode = font;
@@ -66,8 +47,7 @@ namespace VectorCross
                     }
                     nowNode = nowNode.Next;
                 }
-
-                Console.WriteLine("Input index out of range!");
+                throw new IndexOutOfRangeException();
                 return default;
 
             }
@@ -76,41 +56,93 @@ namespace VectorCross
         /// <summary>
         /// 循环打印链式表中的所有元素
         /// </summary>
-        public void Loop()
+        public override string ToString()
         {
+            StringBuilder stringBuilder = new StringBuilder();
             Node<T> pn = font;
             int j = 0;
             while (pn != null)
             {
                 j++;
-                Console.WriteLine($"element{j}, data {pn.Data}" );
+                stringBuilder.AppendLine($"Element {j}, data {pn.Data}");
                 pn = pn.Next;
             }
+            return stringBuilder.ToString();
         }
         /// <summary>
-        /// 找出并打印index位置的元素，如果超出范围则console报错并且返回null值
+        /// 返回index位置的值，或者对index位置重新赋值
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public T Get(int index)
+        public T this[int index]
         {
-            Node<T> nowNode = font;
-            int i = 0;
+            get
+            {
+                Node<T> nowNode = font;
+                int i = 0;
                 while (nowNode != null)
                 {
                     i++;
                     if (i == index)
                     {
-                    return nowNode.Data;
+                        return nowNode.Data;
                     }
                     nowNode = nowNode.Next;
                 }
                 if (i > index || index < 1)
                 {
-                    Console.WriteLine("Input index out of range!");
+                    throw new IndexOutOfRangeException();
                 }
-            return default;
+                return default;
+            }
+            set
+            {
+                Node<T> nowNode = font;
+                int i = 0;
+                while (index != 1 & nowNode.Next != null)
+                {
+
+                    if (i == index - 2 & nowNode.Next != null)
+                    {
+                        nowNode.Next.Data = value;
+                        break;
+                    }
+                    else if (i == index - 2 & nowNode.Next == null)
+                    {
+                        nowNode.Next = new Node<T>{Data = value};
+                        rear = nowNode.Next.Next.Next;
+                        break;
+                    }
+                    nowNode = nowNode.Next;
+                    i++;
+                }
+                if (i < index - 2 || index < 1)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                //需要修改第一个值
+                if (index == 1)
+                {
+                    Node<T> store = nowNode;
+                    font = new Node<T> { Data = value };
+                    if (store.Data == null)//第一个值不存在，头就是尾
+                    {
+                        rear = font;
+                    }
+                    else//第一个值存在，新头接上旧头的索引
+                    {
+                        font.Next = store.Next;
+                    }
+                }
+                else if (nowNode.Next == null )//末尾的值
+                {
+                    nowNode.Next = new Node<T> { Data = value };
+                    rear = nowNode.Next;
+                }
+                return;
+            }
         }
+        
         /// <summary>
         /// 判空
         /// </summary>
@@ -126,7 +158,7 @@ namespace VectorCross
         public void Insert(T data, int index)
         {
             //新建节点
-            Node<T> tmp = new Node<T>(data);
+            Node<T> tmp = new(data);
             Node<T> nowNode = font;
             int i = 0;
             if (index == 1)
@@ -148,7 +180,6 @@ namespace VectorCross
             {
                 while (nowNode != null)
                 {
-                   // nowNode = nowNode.Next;
                     i++;
                     if (i == index - 1)
                     {
@@ -161,11 +192,10 @@ namespace VectorCross
                 }
                 if (i < index-1 || index < 1)
                 {
-                    Console.WriteLine("Input index out of range!");
+                    throw new IndexOutOfRangeException();
                 }
                 
             }
-            Console.WriteLine($"font data {font.Data} rear data {rear.Data}");
         }
         /// <summary>
         /// 删除index处的节点，如果index超出范围则console报错并且不执行操作
@@ -191,7 +221,6 @@ namespace VectorCross
             {
                 while (nowNode != null)
                 {
-                    // nowNode = nowNode.Next;
                     i++;
                     if (i == index - 1)
                     {
@@ -203,11 +232,10 @@ namespace VectorCross
                 }
                 if (i < index - 1|| index < 1)
                 {
-                    Console.WriteLine("Input index out of range!");
+                    throw new IndexOutOfRangeException();
                 }
 
             }
-            //Console.WriteLine($"font data {font.Data} rear data {rear.Data}");
         }
     }
 }
