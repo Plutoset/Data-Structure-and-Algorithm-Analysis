@@ -10,9 +10,9 @@ namespace VectorCross
             Point myPoint = new Point(1,2);
             
             Polygon pg = new Polygon();
-            //Console.Write(pg.ToString());
+            Console.Write(pg.ToString());
             LQueue<string> lq = new LQueue<string>();
-            Console.Write(lq.ToString());
+            //Console.Write(lq.ToString());
             lq.Insert("b", 1);
             lq.Insert("a", 2);
             lq.Insert("d", 3);
@@ -38,15 +38,19 @@ namespace VectorCross
 
             //pl2.Add(point2);
             //pl2.Add(point6);
+            
             pg.Add(point4);
             pg.Insert(point1, 1);
             pg.Insert(point2, 2);
+            Console.Write(pg.ToString());
             pg.Insert(point3, 4);
             pg.Add(point5);
+            pg.GetPer();
+            
             //Console.WriteLine(pl1.GetSegDirection(3));
             //Console.WriteLine(pl1.PointOnLine(point6, 2));
             //Console.WriteLine(PolyLine.LineIntersect(pl1,2,pl2,1));
-            Console.WriteLine(pg.PointInPolygon(point6));
+            Console.WriteLine(pg.PointOnPolygon(point6));
         }
     }
 }
