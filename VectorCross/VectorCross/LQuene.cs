@@ -48,8 +48,6 @@ namespace VectorCross
                     nowNode = nowNode.Next;
                 }
                 throw new IndexOutOfRangeException();
-                return default;
-
             }
 
         }
@@ -61,14 +59,22 @@ namespace VectorCross
             StringBuilder stringBuilder = new StringBuilder();
             Node<T> pn = font;
             int j = 0;
-            while (pn != null)
+            if (pn.Data == null)
             {
-                j++;
-                stringBuilder.AppendLine($"Element {j}, data {pn.Data}");
-                pn = pn.Next;
+                return "No elements in this LQuene. \n";
             }
-            return stringBuilder.ToString();
+            else
+            {
+                while (pn != null)
+                {
+                    j++;
+                    stringBuilder.AppendLine($"Element {j}, data {pn.Data}");
+                    pn = pn.Next;
+                }
+                return stringBuilder.ToString();
+            }
         }
+
         /// <summary>
         /// 返回index位置的值，或者对index位置重新赋值
         /// </summary>
