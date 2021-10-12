@@ -4,7 +4,6 @@
     {
         public T Data { get; set; }
         internal LoopNode<T> Next { get; set; }
-        public bool Visit { get; set; } = false;
         /// <summary>
         /// 构造器
         /// </summary>

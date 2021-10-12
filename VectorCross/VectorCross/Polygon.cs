@@ -8,17 +8,13 @@ namespace VectorCross
 { 
     class Polygon
     {
-        LoopNode<Point> font = new();
+        LoopNode<Point> font;
         public enum PointAndPolygon { Inside, Outside, OnBoundary };
         double xmin, xmax, ymin, ymax;
         /// <summary>
         /// 构造器
         /// </summary>
-        public Polygon()
-        {
-            font = new LoopNode<Point>();
-            font.Visit = true;
-        }
+        public Polygon(){}
         public Polygon(Point point)
         {
             font.Data = point;
@@ -30,10 +26,6 @@ namespace VectorCross
         [Obsolete]
         public void Modify(Point point, int index)
         {
-            if(font.Visit == true)
-            {
-                throw new IndexOutOfRangeException("Empty Polygon.");
-            }
             LoopNode<Point> nowNode = font;
             int i = 1;
             if (i == index)
@@ -69,22 +61,22 @@ namespace VectorCross
         {
             LoopNode<Point> nowNode = font;
             int i = 1;
-            if (font.Visit == true)
+            if (nowNode == null)
             {
                 throw new IndexOutOfRangeException("Empty Polygon.");
+                return default;
             }
-            while (nowNode.Visit == false)
+            do
             {
                 if (nowNode.Data.Equals(point))
                 {
                     return nowNode.Data;
                 }
                 i++;
-                nowNode.Visit = true;
                 nowNode = nowNode.Next;
-            }
-            Reflesh();
+            } while (nowNode != font);
             throw new IndexOutOfRangeException("Input Point not in List!");
+            return default;
         }
 
         /// <summary>
@@ -94,21 +86,19 @@ namespace VectorCross
         {
             LoopNode<Point> pn = font;
             int j = 0;
-            if (font.Visit == true)
+            if (font == null)
             {
                 return "No Points in this Polygon. \n";
             }
             else
             {
                 StringBuilder stringBuilder = new StringBuilder();
-                while (pn.Visit == false)
+                do
                 {
                     j++;
                     stringBuilder.AppendLine($"Point{j}, X {pn.Data.X} Y {pn.Data.Y}");
-                    pn.Visit = true;
                     pn = pn.Next;
-                }
-                Reflesh();
+                } while (pn != font);
                 return stringBuilder.ToString();
             }
         }
@@ -121,7 +111,7 @@ namespace VectorCross
         {
             get
             {
-                if (font.Visit == true)
+                if (font == null)
                 {
                     throw new IndexOutOfRangeException("Empty Polygon.");
                 }
@@ -131,17 +121,15 @@ namespace VectorCross
                 {
                     throw new IndexOutOfRangeException();
                 }
-                while (nowNode.Visit == false)
+                do
                 {
                     if (i == index)
                     {
                         return nowNode.Data;
                     }
                     i++;
-                    nowNode.Visit = true;
                     nowNode = nowNode.Next;
-                }
-                Reflesh();
+                } while (nowNode != font);
                 if (i > index || index < 1)
                 {
                     throw new IndexOutOfRangeException();
@@ -155,25 +143,22 @@ namespace VectorCross
                 if (i == index)
                 {
                     nowNode.Data = value;
-                    Reflesh();
                     return;
                 }
-                if (font.Visit == true)
+                if (font == null)
                 {
                     throw new IndexOutOfRangeException("Empty Polygon.");
                 }
-                while(nowNode.Visit == false)
+                do
                 {
                     if (i == index)
                     {
                         nowNode.Data = value;
                         break;
                     }
-                    nowNode.Visit = true;
                     nowNode = nowNode.Next;
                     i++;
-                }
-                Reflesh();
+                } while (nowNode != font);
                 BoundaryOfPolygon();
                 if (i > index || index < 1)
                 {
@@ -187,7 +172,7 @@ namespace VectorCross
         /// <returns></returns>
         public bool IsEmpty()
         {
-            return font.Visit == true;
+            return font != null;
         }
         /// <summary>
         /// 点point是否属于多边形的节点（数据）
@@ -196,17 +181,15 @@ namespace VectorCross
         /// <returns></returns>
         public bool Contains(Point point)
         {
-            LoopNode<Point> pn = font;
-            while (pn.Visit == false)
+            LoopNode<Point> nowNode = font;
+            do
             {
-                if(pn.Data.X == point.X && pn.Data.Y == point.Y)
+                if (nowNode.Data.X == point.X && nowNode.Data.Y == point.Y)
                 {
-                    Reflesh();
                     return true;
                 }
-                pn.Visit = true;
-                pn = pn.Next;
-            }
+                nowNode = nowNode.Next;
+            } while (nowNode != font);
             return false;
         }
         /// <summary>
@@ -221,7 +204,7 @@ namespace VectorCross
             int i = 1;
             if (index == 1)
             {
-                if (font.Visit == true)
+                if (font == null)
                 {
                     tmp.Next = tmp;
                     font = tmp;
@@ -241,39 +224,23 @@ namespace VectorCross
                     return;
                 }
             }
-            while (nowNode.Visit == false)
+            do
             {
                 if (index == i + 1)
                 {
                     LoopNode<Point> store = nowNode.Next;
                     tmp.Next = store;
                     nowNode.Next = tmp;
-                    Reflesh();
                     BoundaryOfPolygon();
                     return;
                 }
-                nowNode.Visit = true;
                 nowNode = nowNode.Next;
                 i++;
-            }
-            
-            Reflesh();
+            } while (nowNode != font); 
             BoundaryOfPolygon();
             if (i < index || index < 1)
             {
                 throw new IndexOutOfRangeException();
-            }
-        }
-        /// <summary>
-        /// 刷新Polygon中众多节点的索引状态为初始值false
-        /// </summary>
-        public void Reflesh()
-        {
-            LoopNode<Point> pn = font;
-            while (pn.Visit == true)
-            {
-                pn.Visit = false;
-                pn = pn.Next;
             }
         }
         /// <summary>
@@ -286,21 +253,19 @@ namespace VectorCross
             LoopNode<Point> tmp = new LoopNode<Point>(point);
             LoopNode<Point> nowNode = font;
 
-            if (font.Visit == true)
+            if (font == null)
             {
                 tmp.Next = tmp;
                 font = tmp;
                 return;
             }
-            while (nowNode.Next.Visit == false)
+            do
             {
-                nowNode.Visit = true;
                 nowNode = nowNode.Next;
-            }
+            } while (nowNode.Next != font) ;
             LoopNode<Point> store = nowNode.Next;
             tmp.Next = store;
             nowNode.Next = tmp;
-            Reflesh();
             BoundaryOfPolygon();
         }
         /// <summary>
@@ -313,15 +278,20 @@ namespace VectorCross
             int i = 0;
             if (index == 1)
             {
-                if (font.Visit == true)
+                if (font == null)
                 {
                     throw new IndexOutOfRangeException("No Points in this Polygon.");
                 }
                 LoopNode<Point> newNode = font.Next;
+                if(newNode == font)
+                {
+                    font = null;
+                    return;
+                }
                 if (newNode.Next == font)
                 {
                     font = newNode;
-                    font.Next = null;
+                    font.Next = font;
                     return;
                 }
                 LoopNode<Point> store = font;
@@ -361,36 +331,32 @@ namespace VectorCross
         /// <returns></returns>
         public double GetArea()
         {
-            if (font.Visit == true)
+            if (font == null)
             {
                 throw new IndexOutOfRangeException("Empty Polygon.");
             }
             LoopNode<Point> nowNode = font;
             int number = 0;
             double area = 0;
-            while (nowNode.Visit == false && nowNode.Next != null)
+            do
             {
                 number++;
-                nowNode.Visit = true;
                 nowNode = nowNode.Next;
-            }
-            Reflesh();
+            } while (nowNode != font && nowNode.Next != null);
             switch (number)
             {
                 case < 3:
                     throw new IndexOutOfRangeException("Invalid Polygon with Points less than 3.");
                 default:
                     nowNode = font;
-                    while (nowNode.Visit == false)
+                    do
                     {
                         area += 0.5 * Math.Abs((nowNode.Next.Data.Y + nowNode.Data.Y)) *
                                                 (nowNode.Next.Data.X - nowNode.Data.X);
-                        nowNode.Visit = true;
                         nowNode = nowNode.Next;
-                    }
+                    } while (nowNode != font);
                     break;
             }
-            Reflesh();
             return area;
         }
         /// <summary>
@@ -399,36 +365,32 @@ namespace VectorCross
         /// <returns></returns>
         public double GetPer()
         {
-            if (font.Visit == true)
+            if (font == null)
             {
                 throw new IndexOutOfRangeException("Empty Polygon.");
             }
             LoopNode<Point> nowNode = font;
             int number = 0;
             double per = 0;
-            while (nowNode.Visit == false && nowNode.Next != null)
+            do
             {
                 number++;
-                nowNode.Visit = true;
                 nowNode = nowNode.Next;
-            }
-            Reflesh();
+            } while (nowNode != font && nowNode.Next != null);
             switch (number)
             {
                 case < 3:
                     throw new IndexOutOfRangeException("Invalid Polygon with Points less than 3.");
                 default:
                     nowNode = font;
-                    while (nowNode.Visit == false)
+                    do
                     {
                         per += Math.Sqrt(Math.Pow((nowNode.Next.Data.Y - nowNode.Data.Y), 2) +
                                                     Math.Pow((nowNode.Next.Data.X - nowNode.Data.X), 2));
-                        nowNode.Visit = true;
                         nowNode = nowNode.Next;
-                    }
-                    break;
+                    } while (nowNode != font);
+                        break;
             }
-            Reflesh();
             return per;
         }
         /// <summary>
@@ -440,7 +402,11 @@ namespace VectorCross
         {
             LoopNode<Point> pn = font;
             int? pp = null;
-            while (pn.Visit == false)
+            if (font == null)
+            {
+                throw new IndexOutOfRangeException("Empty Polygon.");
+            }
+            do
             {
                 // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点
                 // 因为嫌麻烦，所以我只判断了和左下角的连线。
@@ -452,16 +418,14 @@ namespace VectorCross
                     pp = 2;
                     break;
                 }
-                pn.Visit = true;
                 pn = pn.Next;
-            }
-            Reflesh();
+            } while (pn != font);
 
             if (pp == null)
             {
                 int intersection = 0;
                 pn = font;
-                while (pn.Visit == false)
+                do
                 {
                     // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点，如果有，则将交点计算出来存储进去
                     // 因为嫌麻烦，所以我只判断了和(xmin - 1, ymin - 1)的连线。
@@ -473,9 +437,8 @@ namespace VectorCross
                     {
                         intersection++;
                     }
-                    pn.Visit = true;
                     pn = pn.Next;
-                }
+                } while (pn != font);
                 if (intersection%2 == 0)
                 {
                     pp = 1; //outside
@@ -485,7 +448,6 @@ namespace VectorCross
                     pp = 0; // inside
                 }
             }
-            Reflesh();
             return (PointAndPolygon)pp;
         }
         /// <summary>
@@ -494,30 +456,28 @@ namespace VectorCross
         /// <returns></returns>
         public void BoundaryOfPolygon()
         {
-            LoopNode<Point> pn = font;
+            LoopNode<Point> nowNode = font;
             int j = 0;
-            if (font.Visit == true)
+            if (font == null)
             {
                 throw new IndexOutOfRangeException("Empty Polygon.");
             }
-            xmax = pn.Data.X;
-            xmin = pn.Data.X;
-            ymax = pn.Data.Y;
-            ymin = pn.Data.Y;
+            xmax = nowNode.Data.X;
+            xmin = nowNode.Data.X;
+            ymax = nowNode.Data.Y;
+            ymin = nowNode.Data.Y;
             j++;
-            pn = pn.Next;
-            while (pn.Visit == false && pn != null)
+            nowNode = nowNode.Next;
+            do
             {
-                if (pn.Data.X > xmax) { xmax = pn.Data.X; }
-                if (pn.Data.X < xmin) { xmin = pn.Data.X; }
-                if (pn.Data.Y > ymax) { ymax = pn.Data.Y; }
-                if (pn.Data.Y < ymin) { ymin = pn.Data.Y; }
+                if (nowNode.Data.X > xmax) { xmax = nowNode.Data.X; }
+                if (nowNode.Data.X < xmin) { xmin = nowNode.Data.X; }
+                if (nowNode.Data.Y > ymax) { ymax = nowNode.Data.Y; }
+                if (nowNode.Data.Y < ymin) { ymin = nowNode.Data.Y; }
                 j++;
-                pn.Visit = true;
-                pn = pn.Next;
-            }
-            Reflesh();
-            if (j < 3) { throw new IndexOutOfRangeException("Invalid Polygon with Points less than 3."); }
+                nowNode = nowNode.Next;
+            } while (nowNode != font && nowNode != null);
+            //if (j < 3) { throw new IndexOutOfRangeException("Invalid Polygon with Points less than 3."); }
         }
     }
 }
