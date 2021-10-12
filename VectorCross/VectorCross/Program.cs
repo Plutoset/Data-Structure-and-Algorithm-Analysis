@@ -28,7 +28,7 @@ namespace VectorCross
             Point point3 = new Point(3, 2);
             Point point4 = new Point(2, 1);
             Point point5 = new Point(3, 1);
-            Point point6 = new Point(1.5, 1);
+            Point point6 = new Point(2.5, 1.1);
 
             //pl1.Add(point1);
             //pl1.Add(point2);
@@ -42,15 +42,15 @@ namespace VectorCross
             pg.Add(point4);
             pg.Insert(point1, 1);
             pg.Insert(point2, 2);
-            Console.Write(pg.ToString());
             pg.Insert(point3, 4);
             pg.Add(point5);
             pg.GetPer();
-            
+            Console.Write(pg.ToString());
             //Console.WriteLine(pl1.GetSegDirection(3));
             //Console.WriteLine(pl1.PointOnLine(point6, 2));
             //Console.WriteLine(PolyLine.LineIntersect(pl1,2,pl2,1));
-            Console.WriteLine(pg.PointOnPolygon(point6));
+            Console.WriteLine(pg.PointInPolygon(point6).ToString());
+            Console.WriteLine(pg.GetArea());
         }
     }
 }

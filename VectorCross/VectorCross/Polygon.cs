@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace VectorCross 
 { 
-    
     class Polygon
     {
         LoopNode<Point> font = new();
-        enum PointAndPolygon { Inside, Outside, OnBoundary };
+        public enum PointAndPolygon { Inside, Outside, OnBoundary };
+        double xmin, xmax, ymin, ymax;
         /// <summary>
         /// 构造器
         /// </summary>
@@ -23,7 +23,6 @@ namespace VectorCross
         {
             font.Data = point;
         }
-        double xmin, xmax, ymin, ymax;
         // <summary>
         /// 在index处修改值，被直接索引给替代，不再维护
         /// </summary>
@@ -106,15 +105,15 @@ namespace VectorCross
                 {
                     j++;
                     stringBuilder.AppendLine($"Point{j}, X {pn.Data.X} Y {pn.Data.Y}");
+                    pn.Visit = true;
                     pn = pn.Next;
                 }
                 Reflesh();
                 return stringBuilder.ToString();
             }
         }
-            //}
             /// <summary>
-            /// 找出并打印index位置的元素，如果超出范围则console报错并且返回null值
+            /// 对index位置的元素进行索引或者赋值，如果超出范围则报错
             /// </summary>
             /// <param name="index"></param>
             /// <returns></returns>
@@ -175,15 +174,13 @@ namespace VectorCross
                     i++;
                 }
                 Reflesh();
+                BoundaryOfPolygon();
                 if (i > index || index < 1)
                 {
                     throw new IndexOutOfRangeException();
                 }
             }
         }
-            
-        //}
-
         /// <summary>
         /// 判空
         /// </summary>
@@ -191,6 +188,26 @@ namespace VectorCross
         public bool IsEmpty()
         {
             return font.Visit == true;
+        }
+        /// <summary>
+        /// 点point是否属于多边形的节点（数据）
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool Contains(Point point)
+        {
+            LoopNode<Point> pn = font;
+            while (pn.Visit == false)
+            {
+                if(pn.Data.X == point.X && pn.Data.Y == point.Y)
+                {
+                    Reflesh();
+                    return true;
+                }
+                pn.Visit = true;
+                pn = pn.Next;
+            }
+            return false;
         }
         /// <summary>
         /// 在index处入队
@@ -208,6 +225,7 @@ namespace VectorCross
                 {
                     tmp.Next = tmp;
                     font = tmp;
+                    BoundaryOfPolygon();
                     return;
                 }
                 else
@@ -219,6 +237,7 @@ namespace VectorCross
                     {
                         store.Next = font;
                     }
+                    BoundaryOfPolygon();
                     return;
                 }
             }
@@ -230,12 +249,14 @@ namespace VectorCross
                     tmp.Next = store;
                     nowNode.Next = tmp;
                     Reflesh();
+                    BoundaryOfPolygon();
                     return;
                 }
                 nowNode.Visit = true;
                 nowNode = nowNode.Next;
                 i++;
             }
+            
             Reflesh();
             BoundaryOfPolygon();
             if (i < index || index < 1)
@@ -243,18 +264,18 @@ namespace VectorCross
                 throw new IndexOutOfRangeException();
             }
         }
-            /// <summary>
-            /// 刷新Polygon中众多节点的索引状态为初始值false
-            /// </summary>
-            public void Reflesh()
+        /// <summary>
+        /// 刷新Polygon中众多节点的索引状态为初始值false
+        /// </summary>
+        public void Reflesh()
+        {
+            LoopNode<Point> pn = font;
+            while (pn.Visit == true)
             {
-                LoopNode<Point> pn = font;
-                while (pn.Visit == true)
-                {
-                    pn.Visit = false;
-                    pn = pn.Next;
-                }
+                pn.Visit = false;
+                pn = pn.Next;
             }
+        }
         /// <summary>
         /// 在链式表的最后加上点
         /// </summary>
@@ -340,6 +361,10 @@ namespace VectorCross
         /// <returns></returns>
         public double GetArea()
         {
+            if (font.Visit == true)
+            {
+                throw new IndexOutOfRangeException("Empty Polygon.");
+            }
             LoopNode<Point> nowNode = font;
             int number = 0;
             double area = 0;
@@ -374,6 +399,10 @@ namespace VectorCross
         /// <returns></returns>
         public double GetPer()
         {
+            if (font.Visit == true)
+            {
+                throw new IndexOutOfRangeException("Empty Polygon.");
+            }
             LoopNode<Point> nowNode = font;
             int number = 0;
             double per = 0;
@@ -403,50 +432,11 @@ namespace VectorCross
             return per;
         }
         /// <summary>
-        /// 计算point是否在多边形的一条边上
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public string PointOnPolygon(Point point)
-        {
-            LoopNode<Point> pn = font;
-            int? pp = null;
-            while (pn.Visit == false)
-            {
-                // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点
-                // 因为嫌麻烦，所以我只判断了和左下角的连线。
-                Point p1 = pn.Data;
-                Point p2 = pn.Next.Data;
-                double intersection = ((point.X - p1.X) * (p2.Y - p1.Y) - (point.Y - p1.Y) * (p2.X - p1.X));
-                if (Math.Min(p1.X, p2.X) <= point.X
-                    & point.X <= Math.Max(p1.X, p2.X)
-                    & Math.Min(p1.Y, p2.Y) <= point.Y
-                    & point.Y <= Math.Max(p1.Y, p2.Y)
-                    & intersection == 0
-                    )
-                {
-                    pp = 1;
-                    break;
-                }
-                pn.Visit = true;
-                pn = pn.Next;
-            }
-            if (pp == null)
-            {
-                pp = 2;
-            }
-            Reflesh();
-            PointAndPolygon b = (PointAndPolygon)pp;
-            string b1 = b.ToString();
-            //return b.ToString();
-            return "Point is not on the boundary of the Polygon.";
-        }
-        /// <summary>
         /// 计算point是否在Polygon之内，首先调用PointOnPolygon(Point point)判断point是否在Polygon的边界上。
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public string PointInPolygon(Point point)
+        public PointAndPolygon PointInPolygon(Point point)
         {
             LoopNode<Point> pn = font;
             int? pp = null;
@@ -456,15 +446,10 @@ namespace VectorCross
                 // 因为嫌麻烦，所以我只判断了和左下角的连线。
                 Point p1 = pn.Data;
                 Point p2 = pn.Next.Data;
-                double intersection = Point.Intersection(p1, p1, point, p2);
-                if (Math.Min(p1.X, p2.X) <= point.X
-                    & point.X <= Math.Max(p1.X, p2.X)
-                    & Math.Min(p1.Y, p2.Y) <= point.Y
-                    & point.Y <= Math.Max(p1.Y, p2.Y)
-                    & intersection == 0
-                    )
+                double intersection = Point.Segment(p1, p2, point);
+                if (intersection == 2)
                 {
-                    pp = 1;
+                    pp = 2;
                     break;
                 }
                 pn.Visit = true;
@@ -475,103 +460,33 @@ namespace VectorCross
             if (pp == null)
             {
                 int intersection = 0;
-                bool overlapSeg = false;
                 pn = font;
                 while (pn.Visit == false)
                 {
-                    // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点
-                    // 因为嫌麻烦，所以我只判断了和左下角的连线。
-                    Point LeftBottom = new Point(xmin, ymin);
-                    double intersection1 = Point.Intersection(pn.Next.Data, point, pn.Data, pn.Data);
-                    double intersection2 = Point.Intersection(pn.Next.Data, LeftBottom, pn.Data, pn.Data); ;
-                    switch (intersection1 * intersection2)
+                    // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点，如果有，则将交点计算出来存储进去
+                    // 因为嫌麻烦，所以我只判断了和(xmin - 1, ymin - 1)的连线。
+                    Point LeftBottom = new Point(xmin - 1, ymin - 1);
+                    Point p1 = pn.Data;
+                    Point p2 = pn.Next.Data;
+                    bool now_intersection = Point.Intersection(p1, p2, point, LeftBottom);
+                    if (now_intersection)
                     {
-                        case < 0: // 输入点与边界左下角的连线与当前多边形边界线有交点
-                            intersection++;
-                            break;
-                        case 0:
-                            // 为了防范两条连线拥有共同端点，重复计数
-                            if (overlapSeg)
-                            {
-                                // 前一段多边形边界线和输入点与边界左下角的连线有交点，此时不计入相交
-                                overlapSeg = false;
-                            }
-                            else
-                            {
-                                // 前一段多边形边界线和输入点与边界左下角的连线没有交点，此时计入一次相交
-                                intersection++;
-                                overlapSeg = true;
-                            }
-                            break;
+                        intersection++;
                     }
                     pn.Visit = true;
                     pn = pn.Next;
                 }
-                pp = (intersection % 2) switch
+                if (intersection%2 == 0)
                 {
-                    0 => 2,
-                    _ => 0,
-                };
+                    pp = 1; //outside
+                }
+                else
+                {
+                    pp = 0; // inside
+                }
             }
             Reflesh();
-            PointAndPolygon b = (PointAndPolygon)pp;
-            string b1 = b.ToString();
-            return b1;
-            //string result = PointOnPolygon(point);
-            //if (result == "Point is on the boundary of the Polygon.")
-            //{
-            //    return result;
-            //}
-            //List<double> boundary = BoundaryOfPolygon();
-            //if (boundary == null)
-            //{
-            //    return "Invalid Polygon!";
-            //}
-            //double xmax = boundary[0];
-            //double xmin = boundary[1];
-            //double ymax = boundary[2];
-            //double ymin = boundary[3];
-            //int intersection = 0;
-            //bool overlapSeg = false;
-            //LoopNode<Point> pn = font;
-
-            //while (pn.Visit == false)
-            //{
-            //    // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点
-            //    // 因为嫌麻烦，所以我只判断了和左下角的连线。
-            //    double intersection1 = ((pn.Data.X - pn.Next.Data.X) * (pn.Data.Y - point.Y) - (pn.Data.Y - pn.Next.Data.Y) * (pn.Data.X - point.X));
-            //    double intersection2 = ((pn.Data.X - pn.Next.Data.X) * (pn.Data.Y - ymin) - (pn.Data.Y - pn.Next.Data.Y) * (pn.Data.X - xmin));
-            //    if (intersection1 * intersection2 < 0)
-            //    {
-            //        intersection++;
-            //    }
-
-            //    else if (intersection1 * intersection2 == 0)
-            //    {
-            //        // 为了防范两条连线拥有共同端点，重复计数
-            //        if (overlapSeg)
-            //        {
-            //            // 前一段多边形边界线和输入点与边界左下角的连线有交点，此时不计入相交
-            //            overlapSeg = false;
-            //        }
-            //        else
-            //        {
-            //            // 前一段多边形边界线和输入点与边界左下角的连线没有交点，此时计入一次相交
-            //            intersection++;
-            //            overlapSeg = true;
-            //        }
-            //    }
-            //    pn.Visit = true;
-            //    pn = pn.Next;
-            //}
-            //if (intersection % 2 == 0)
-            //{
-            //    return "The input point is outside the input polygon.";
-            //}
-            //else
-            //{
-            //    return "The input point is inside the input polygon.";
-            //}
+            return (PointAndPolygon)pp;
         }
         /// <summary>
         /// 计算Polygon在xy方向上的最大最小值，并且以List<double>返回。如果Polygon不具有三个及以上的节点，则返回空值。
