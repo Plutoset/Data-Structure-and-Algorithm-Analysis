@@ -1,171 +1,120 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VectorCross
 {
-    class PolyLine
+    class PolyLine : LQueue<Point>
     {
-        private List<Point> data = new List<Point>();
-        public List<Point> Data { get => data; set => data = value; }
-        public PolyLine() { }
-        public PolyLine(List<Point> data)
-        {
-            this.Data = data;
-        }
+        public enum Segment {Anticlockwise, Extending, Clockwise, Backturn };
         /// <summary>
         /// 判断point是否在第index段折线段上
         /// </summary>
         /// <param name="point"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string PointOnLine(Point point, int index)
+        public bool PointOnLine(Point point)
         {
-            if (index < 1)
+            Node<Point> pn = front;
+            if (front == null)
             {
-                return "Invalid Index place. Please enter an index larger than 1.";
+                throw new IndexOutOfRangeException("Empty Polygon.");
             }
-            if (GetSegCount() < index)
+            while (pn != rear)
             {
-                return "No PolyLine Detected. Please add more points to this polyline, inspect the input index, or checkout another.";
-            }
-            try
-            {
-                Point p1 = Data[index - 1];
-                Point p2 = Data[index];
-                double intersection = (double)((point.X - p1.X) * (p2.Y - p1.Y) - (point.Y - p1.Y) * (p2.X - p1.X));
-                if (Math.Min((double)p1.X, (double)p2.X) <= (double)point.X
-                    & (double)point.X <= Math.Max((double)p1.X, (double)p2.X)
-                    & Math.Min((double)p1.Y, (double)p2.Y) <= (double)point.Y
-                    & (double)point.Y <= Math.Max((double)p1.Y, (double)p2.Y)
-                    & intersection == 0
-                    )
+                // 判断输入点与边界左下角的连线与当前多边形边界线是否有交点
+                // 因为嫌麻烦，所以我只判断了和左下角的连线。
+                Point p1 = pn.Data;
+                Point p2 = pn.Next.Data;
+                double intersection = Point.Segment(p1, p2, point);
+                if (intersection == 2)
                 {
-                    return "Point is on the Polyline.";
+                    return true;
                 }
-                else
-                {
-                    return "Point is not on the Polyline.";
-                }
+                pn = pn.Next;
             }
-            catch { }
-            return "No PolyLine Detected. Please add more points to this polyline, inspect the input index, or checkout another.";
-        }
-        /// <summary>
-        /// 在PolyLine的末尾添加线段
-        /// </summary>
-        /// <param name="point"></param>
-        public void Add(Point point)
-        {
-            this.Data.Add(point);
-        }
-        public double GetSegCount()
-        {
-            return Data.Count;
+            return false;
         }
         /// <summary>
         /// 第index个节点的拐向
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string GetSegDirection(int index)
+        public Segment GetSegDirection(int index)
         {
-            if (index <= 1)
+            Node<Point> nowNode = front;
+            if (front == null)
             {
-                return "Invalid Index place. Please enter an index larger than 1.";
+                throw new IndexOutOfRangeException("Empty Polygon.");
             }
-            if (GetSegCount() < index)
+            if (index < 1)
             {
-                return "No Segment Detected. Please add more points to this polyline, inspect the input index, or checkout another.";
+                throw new IndexOutOfRangeException();
             }
-            try
+            int i = 1;
+            int seg;
+            while (nowNode.Next != rear)
             {
-                Point p0 = Data[index - 2];
-                Point p1 = Data[index - 1];
-                Point p2 = Data[index];
-                double direction = (double)(((p2.X - p0.X) * (p1.Y - p0.Y)) - ((p1.X - p0.X) * (p2.Y - p0.Y)));
-                if (direction < 0)
+                if(i == index)
                 {
-                    return "Segment anticlockwise";
+                    Point p1 = nowNode.Data;
+                    Point p2 = nowNode.Next.Data;
+                    Point p3 = nowNode.Next.Next.Data;
+                    double intersection = Point.Segment(p1, p3, p2);
+                    seg = intersection switch
+                    {
+                        -1 => 0,    //从首点到节点，到首点到终点，逆时针方向旋转，anticlockwise
+                        2 => 1,     //节点位于首尾两点中间，即延长，extending
+                        1 => 2,     //从首点到节点，到首点到终点，顺时针方向旋转，clockwise
+                        _ => 3,     //节点在首位两点的延长线上，即折返，backturn
+                    };
+                    return (Segment)seg;
                 }
-                if (direction == 0)
-                {
-                    return "Segment collinear";
-                }
-                if (direction > 0)
-                {
-                    return "Segment clockwise";
-                }
+                nowNode = nowNode.Next;
             }
-            catch
+            if (i < index - 1)
             {
+                throw new IndexOutOfRangeException();
             }
-            return "No Segment Detected. Please add more points to this polyline, inspect the input index, or checkout another.";
+            return default;
         }
         /// <summary>
-        /// 判断polyLine1的第index1段线与polyLine2的第index2段线是否相交。
+        /// 判断polyLine1是否相交。
         /// </summary>
         /// <param name="polyLine1"></param>
-        /// <param name="index1"></param>
         /// <param name="polyLine2"></param>
-        /// <param name="index2"></param>
         /// <returns></returns>
-        public static string LineIntersect(PolyLine polyLine1, int index1, PolyLine polyLine2, int index2)
+        public static bool LineIntersect(PolyLine polyLine1, PolyLine polyLine2)
         {
-            if (index1 < 1)
+            Node<Point> nowNode1 = polyLine1.front;
+            Node<Point> nowNode2 = polyLine2.front;
+            if (nowNode1 == null && nowNode2 == null)
             {
-                return "Invalid Index place for the first polyLine input. Please enter an index larger than 1.";
+                throw new IndexOutOfRangeException("The two Polylines input are invalid.");
             }
-            if (index2 < 1)
+            else if (nowNode1 == null)
             {
-                return "Invalid Index place for the second polyLine input. Please enter an index larger than 1.";
+                throw new IndexOutOfRangeException("The First Polyline input is invalid.");
             }
-            if (polyLine1.Data.Count() < index1 & polyLine2.Data.Count() < index2)
+            else if (nowNode2 == null)
             {
-                return "The two PolyLines input are invalid. Please add more points to the wrong polylines, inspect the input index, or checkout another.";
-            }
-            else if (polyLine1.Data.Count() < index1 & polyLine2.Data.Count() > index2)
-            {
-                return "The first PolyLine input is invalid. Please add more points to the wrong polyline, inspect the input index, or checkout another.";
-            }
-            else if (polyLine1.Data.Count() > index1 & polyLine2.Data.Count() < index2)
-            {
-                return "The second PolyLine input is invalid. Please add more points to the wrong polyline, inspect the input index, or checkout another.";
+                throw new IndexOutOfRangeException("The Second Polyline input is invalid.");
             }
             else
             {
-                Point p1 = polyLine1.Data[index1 - 1];
-                Point p2 = polyLine1.Data[index1];
-                Point q1 = polyLine2.Data[index2 - 1];
-                Point q2 = polyLine2.Data[index2];
-
-                double intersection1 = (double)((p1.X - p2.X) * (p1.Y - q1.Y) - (p1.Y - p2.Y) * (p1.X - q1.X));
-                double intersection2 = (double)((p1.X - p2.X) * (p1.Y - q2.Y) - (p1.Y - p2.Y) * (p1.X - q2.X));
-
-                if (intersection1 * intersection2 < 0)
+                do
                 {
-                    return "The two Polylines intersect.";
-                }
-                else if (intersection1 * intersection2 > 0)
-                {
-                    return "The two Polylines do not intersect.";
-                }
-                else
-                {
-                    if (intersection1 == 0 && intersection2 == 0)
+                    do
                     {
-                        return "The two Polylines have a common endpoint, and overlap each other.";
-                    }
-                    else if (intersection1 == 0 || intersection2 == 0)
-                    {
-                        return "The two Polylines have a common endpoint.";
-                    }
-
-                    return "The two Polylines overlap each other.";
-                }
+                        bool intersection = Point.Intersection(nowNode1.Data, nowNode1.Next.Data, nowNode2.Data, nowNode2.Next.Data);
+                        if (intersection)
+                        {
+                            return true;
+                        }
+                        nowNode2 = nowNode2.Next;
+                    } while (nowNode2.Next != polyLine2.rear);
+                    nowNode1 = nowNode1.Next;
+                } while (nowNode1.Next != polyLine1.rear);
             }
+            return default;
         }
     }
 }

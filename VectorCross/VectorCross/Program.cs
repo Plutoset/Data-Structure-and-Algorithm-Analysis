@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace VectorCross
 {
@@ -42,7 +41,7 @@ namespace VectorCross
             pg.Add(point4);
             
             pg.Insert(point1, 1);
-            
+            bool i = Point.Intersection(point1, point2, point1, point3);
             pg.Insert(point2, 2);
             pg.Delete(3);
             pg.Insert(point3, 4);

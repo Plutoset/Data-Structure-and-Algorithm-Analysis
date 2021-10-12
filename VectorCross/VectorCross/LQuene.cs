@@ -9,16 +9,16 @@ namespace VectorCross
     
     class LQueue<T>
     {
-        Node<T> font;   // 队首
-        Node<T> rear;   // 队尾
+        public Node<T> front;   // 队首
+        public Node<T> rear;   // 队尾
 
         /// <summary>
         /// 构造器
         /// </summary>
         public LQueue()
         {
-            font = new Node<T>();
-            rear = font;
+            front = new Node<T>();
+            rear = front;
         }
         /// <summary>
         /// WARNING UNCOMPLETED FUNCTION
@@ -29,9 +29,9 @@ namespace VectorCross
         [Obsolete]
         public T Find(T data)
         {
-            Node<T> nowNode = font;
+            Node<T> nowNode = front;
             int i = 0;
-            if (font.Data == null)
+            if (front.Data == null)
             {
                 Console.WriteLine("LinkQuene already empty!");
                 return default;
@@ -57,19 +57,19 @@ namespace VectorCross
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            Node<T> pn = font;
+            Node<T> nowNode = front;
             int j = 0;
-            if (pn.Data == null)
+            if (nowNode.Data == null)
             {
                 return "No elements in this LQuene. \n";
             }
             else
             {
-                while (pn != null)
+                while (nowNode != null)
                 {
                     j++;
-                    stringBuilder.AppendLine($"Element {j}, data {pn.Data}");
-                    pn = pn.Next;
+                    stringBuilder.AppendLine($"Element {j}, data {nowNode.Data}");
+                    nowNode = nowNode.Next;
                 }
                 return stringBuilder.ToString();
             }
@@ -84,7 +84,7 @@ namespace VectorCross
         {
             get
             {
-                Node<T> nowNode = font;
+                Node<T> nowNode = front;
                 int i = 0;
                 while (nowNode != null)
                 {
@@ -103,7 +103,7 @@ namespace VectorCross
             }
             set
             {
-                Node<T> nowNode = font;
+                Node<T> nowNode = front;
                 int i = 0;
                 while (index != 1 & nowNode.Next != null)
                 {
@@ -130,14 +130,14 @@ namespace VectorCross
                 if (index == 1)
                 {
                     Node<T> store = nowNode;
-                    font = new Node<T> { Data = value };
+                    front = new Node<T> { Data = value };
                     if (store.Data == null)//第一个值不存在，头就是尾
                     {
-                        rear = font;
+                        rear = front;
                     }
                     else//第一个值存在，新头接上旧头的索引
                     {
-                        font.Next = store.Next;
+                        front.Next = store.Next;
                     }
                 }
                 else if (nowNode.Next == null )//末尾的值
@@ -155,7 +155,7 @@ namespace VectorCross
         /// <returns></returns>
         public bool IsEmpty()
         {
-            return font.Data == null;
+            return front.Data == null;
         }
         /// <summary>
         /// 在index处入队
@@ -165,20 +165,20 @@ namespace VectorCross
         {
             //新建节点
             Node<T> tmp = new(data);
-            Node<T> nowNode = font;
+            Node<T> nowNode = front;
             int i = 0;
             if (index == 1)
             {
-                Node<T> store = font;
-                font = tmp;
+                Node<T> store = front;
+                front = tmp;
                 if (store.Data != null)
                 {
-                    font.Next = store;
+                    front.Next = store;
                 }
                 
                 if (rear.Data == null)
                 {
-                    rear = font;
+                    rear = front;
                 }
                 return;
             }
@@ -209,17 +209,17 @@ namespace VectorCross
         /// <param name="index"></param>
         public void Delete(int index)
         {
-            Node<T> nowNode = font;
+            Node<T> nowNode = front;
             int i = 0;
             if (index == 1)
             {
-                if (font.Data == null)
+                if (front.Data == null)
                 {
                     Console.WriteLine("LinkQuene already empty!");
                 }
                 else
                 {
-                    font = font.Next;
+                    front = front.Next;
                 }
                 return;
             }
@@ -242,6 +242,17 @@ namespace VectorCross
                 }
 
             }
+        }
+        public int Count()
+        {
+            int i = 0;
+            Node<T> nowNode = front;
+            while (nowNode != null)
+            {
+                i++;
+                nowNode = nowNode.Next;
+            }
+            return i;
         }
     }
 }

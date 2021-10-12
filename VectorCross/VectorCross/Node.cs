@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VectorCross
+﻿namespace VectorCross
 {
     class Node<T>
     {
         public T Data { get; set; }
-        internal Node<T> Next { get; set; } = null;
+        public Node<T> Next { get; set; } = null;
         /// <summary>
         /// 构造器
         /// </summary>
