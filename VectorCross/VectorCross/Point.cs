@@ -105,9 +105,10 @@ namespace VectorCross
         /// <returns></returns>
         public static bool Intersection(Point p1, Point p2, Point q1, Point q2)
         {
+
             int straddle1 = Straddle(p1, p2, q1, q2);
             int straddle2 = Straddle(q1, q2, p1, p2);
-            if (straddle1 > 0  & straddle2 > 0)
+            if (straddle1 >= 0  & straddle2 >= 0)
             {
                 return true;
             }

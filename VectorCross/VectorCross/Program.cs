@@ -28,6 +28,8 @@ namespace VectorCross
             Point point4 = new Point(2, 1);
             Point point5 = new Point(3, 1);
             Point point6 = new Point(2.5, 1.1);
+            Point point7 = new Point(1, 1.1);
+            Point point8 = new Point(1, 1.6);
 
             //pl1.Add(point1);
             //pl1.Add(point2);
@@ -41,7 +43,7 @@ namespace VectorCross
             pg.Add(point4);
             
             pg.Insert(point1, 1);
-            bool i = Point.Intersection(point1, point2, point1, point3);
+            bool i = Point.Intersection(point1, point2, point7, point8);
             pg.Insert(point2, 2);
             pg.Delete(3);
             pg.Insert(point3, 4);
