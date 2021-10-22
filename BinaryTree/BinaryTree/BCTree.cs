@@ -163,48 +163,84 @@ namespace BinaryTree
                 Insert(bNode);
             }
         }
+        /// <summary>
+        /// 还原成整个打包成完全二叉树的列表
+        /// </summary>
+        /// <returns></returns>
         public List<BNode<IndexNode<T>>> ToQuene()
         {
             List<BNode<IndexNode<T>>> indexNodes = new List<BNode<IndexNode<T>>>();
             if (!IsEmpty())
             {
                 indexNodes.Add(Head);
-                Loop(Head, ref indexNodes);
+                int depth = 1;
+                do
+                {
+                    int nowDepth = 1;
+                    bool ahead = true;
+                    FindDepth(Head, ref indexNodes, depth, ref nowDepth, ref ahead);
+                    depth++;
+                } while (depth < Depth());
             }
             return indexNodes;
         }
-        public void Loop(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes)
+        /// <summary>
+        /// 把第depth层的元素都打包出来塞到列表bNodes里，bNode, nowDepth 和ahead都是传参，ahead判断终止
+        /// </summary>
+        /// <param name="bNode"></param>
+        /// <param name="bNodes"></param>
+        /// <param name="depth"></param>
+        /// <param name="nowDepth"></param>
+        /// <param name="ahead"></param>
+        public void FindDepth(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes, int depth, ref int nowDepth,ref bool ahead)
         {
             if (bNode == null)
             {
                 return;
             }
-            else
+            if (ahead == false)
             {
-                BNode<IndexNode<T>> lNode = bNode.LChild;
-                BNode<IndexNode<T>> rNode = bNode.RChild;
-                if (lNode != null)
+                return;
+            }
+            BNode<IndexNode<T>> lNode = bNode.LChild;
+            BNode<IndexNode<T>> rNode = bNode.RChild;
+            if (nowDepth != depth)
+            {
+                nowDepth++;
+                FindDepth(lNode, ref bNodes, depth, ref nowDepth, ref ahead);
+                FindDepth(rNode, ref bNodes, depth, ref nowDepth, ref ahead);
+            }
+            else if (nowDepth == depth)
+            {
+                if (lNode == null && rNode == null)
+                {
+                    ahead = false;
+                }
+                else if (lNode != null && rNode!=null)
                 {
                     bNodes.Add(lNode);
-                }
-                if (rNode != null)
-                {
                     bNodes.Add(rNode);
                 }
-                if (lNode != null)
+                else if (lNode != null && rNode == null)
                 {
-                    Loop(lNode, ref bNodes);
-                }
-                if (rNode != null)
-                {
-                    Loop(rNode, ref bNodes);
+                    bNodes.Add(lNode);
+                    ahead = false;
                 }
             }
         }
         public BTree<T> ToBTree()
         {
             BTree<T> bTree = new BTree<T>();
-
+            List<BNode<IndexNode<T>>> nodes = ToQuene();
+            List<IndexNode<T>> indexNodes = new List<IndexNode<T>>();
+            foreach(BNode<IndexNode<T>> node in nodes)
+            {
+                IndexNode<T> indexNode = node.Data;
+                indexNodes.Add(indexNode);
+            }
+            // 对于元素按照key重新排序一下
+            indexNodes = indexNodes.OrderBy(item => item.Key).ToList();
+            
             return bTree;
         }
     }

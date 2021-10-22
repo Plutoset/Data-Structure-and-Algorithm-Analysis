@@ -21,7 +21,9 @@ namespace BinaryTree
             IndexNode<int> bNode15 = new IndexNode<int>(15,55);
             List<IndexNode<int>> bNodes = new List<IndexNode<int>> { bNode1, bNode2, bNode3, bNode4, bNode6, bNode7, bNode8, bNode9, bNode13, bNode15 };
             bCSTree.InQuene(bNodes);
+            int depth = bCSTree.Depth();
             List<BNode<IndexNode<int>>> biNodes = bCSTree.ToQuene();
+            bCSTree.ToBTree();
             ////测试二叉查找树
             //BSTree<int> bSTree = new BSTree<int>();
             //IndexNode<int> node1 = new IndexNode<int>(7, 3);
