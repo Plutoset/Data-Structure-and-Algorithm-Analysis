@@ -80,50 +80,56 @@ namespace BinaryTree
             return (bNode != null) && (bNode.RChild == null) && (bNode.LChild == null);
         }
 
-        public void TravelInOrder(BNode<T> bNode)
+        public void TravelInOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
+                bNodes = new List<BNode<T>>();
                 return;
             }
             if (bNode != null)
             {
-                TravelInOrder(bNode.LChild);
+                TravelInOrder(bNode.LChild, ref bNodes);
                 Console.WriteLine(bNode.Data);
-                TravelInOrder(bNode.RChild);
+                bNodes.Add(bNode);
+                TravelInOrder(bNode.RChild, ref bNodes);
             }
         }
-        public void TravelPreOrder(BNode<T> bNode)
+        public void TravelPreOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
+                bNodes = new List<BNode<T>>();
                 return;
             }
             if (bNode != null)
             {
                 Console.WriteLine(bNode.Data);
-                TravelPreOrder(bNode.LChild);
-                TravelPreOrder(bNode.RChild);
+                bNodes.Add(bNode);
+                TravelPreOrder(bNode.LChild, ref bNodes);
+                TravelPreOrder(bNode.RChild, ref bNodes);
             }
         }
-        public void TravelPostOrder(BNode<T> bNode)
+        public void TravelPostOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
+                bNodes = new List<BNode<T>>();
                 return;
             }
             if (bNode != null)
             {
-                TravelPostOrder(bNode.LChild);
-                TravelPostOrder(bNode.RChild);
+                TravelPostOrder(bNode.LChild, ref bNodes);
+                TravelPostOrder(bNode.RChild, ref bNodes);
                 Console.WriteLine(bNode.Data);
+                bNodes.Add(bNode);
             }
         }
 
-        public void LevelOrder(BNode<T> bNode)
+        public void LevelOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
         {
             if (bNode == null)
             {
