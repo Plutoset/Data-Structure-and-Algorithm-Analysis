@@ -8,14 +8,14 @@ namespace BinaryTree
 {
     class BTree<T>
     {
-        public BNode<T> Head { get; set; }
+        public BNode<IndexNode<T>> Head { get; set; }
         public BTree()
         {
             Head = null;
         }
-        public BTree(T data)
+        public BTree(IndexNode<T> data)
         {
-            BNode<T> head = new BNode<T>(data);
+            BNode<IndexNode<T>> head = new BNode<IndexNode<T>>(data);
             Head = head;
         }
         public void MakeEmpty()
@@ -37,20 +37,7 @@ namespace BinaryTree
         {
             return bNode.RChild;
         }
-        public void Insert(BNode<T> bNode, bool lr)
-        {
-            
-            BNode<T> currentNode = Head;
-            if (IsEmpty())
-            {
-                Head = bNode;
-            }
-            else
-            {
-                //lr == true插左边，lr == false插右边
-            }
-        }
-        public BNode<T> Find(T data, BNode<T> nowNode = null)
+        public BNode<IndexNode<T>> Find(T data, BNode<IndexNode<T>> nowNode = null)
         {
             if (nowNode == null)
             {
@@ -143,7 +130,7 @@ namespace BinaryTree
         /// </summary>
         /// <param name="bNode"></param>
         /// <param name="depth"></param>
-        public void GetDepth(BNode<T> bNode, ref int depth)
+        public void GetDepth(BNode<IndexNode<T>> bNode, ref int depth)
         {
             if (IsEmpty())
             {
@@ -151,8 +138,8 @@ namespace BinaryTree
             }
             if (bNode != null)
             {
-                BNode<T> lNode = bNode.LChild;
-                BNode<T> rNode = bNode.RChild;
+                BNode<IndexNode<T>> lNode = bNode.LChild;
+                BNode<IndexNode<T>> rNode = bNode.RChild;
                 if (lNode != null && rNode != null)//左右节点都实
                 {
                     depth++;
@@ -185,7 +172,7 @@ namespace BinaryTree
             GetCount(Head, ref count);
             return count;
         }
-        public void GetCount(BNode<T> bNode, ref int count)
+        public void GetCount(BNode<IndexNode<T>> bNode, ref int count)
         {
             if (bNode != null)
             {
@@ -209,6 +196,39 @@ namespace BinaryTree
             else
             {
                 return false;
+            }
+        }
+        public void OrderInsert(IndexNode<T> bNode)
+        {
+            int loopKey = bNode.Key;
+            BNode<IndexNode<T>> iNode = new BNode<IndexNode<T>>(bNode);
+            List<int> mod = new List<int>();
+            List<int> log = new List<int>();
+            while (loopKey != 1)
+            {
+                int nowMod = loopKey % 2;
+                loopKey = (loopKey - nowMod) / 2;
+                mod.Add(nowMod);
+            }
+            BNode<IndexNode<T>> currentNode = Head;
+            mod.Reverse();
+            int LastMod = mod[^1];
+            mod.RemoveAt(mod.Count - 1);
+            foreach (int nowMod in mod)
+            {
+                currentNode = nowMod == 1 ? currentNode.RChild : currentNode.LChild;
+                if (currentNode == null)
+                {
+                    throw new IndexOutOfRangeException("The parent node for the insert node is invalid. Please check the key index.");
+                }
+            }
+            if (LastMod == 1)
+            {
+                currentNode.RChild = iNode;
+            }
+            else
+            {
+                currentNode.LChild = iNode;
             }
         }
     }

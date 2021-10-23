@@ -9,7 +9,7 @@ namespace BinaryTree
     /// <summary>
     /// 二叉搜索树：结点的左子节点的值永远小于该结点的值，而右子结点的值永远大于该结点的值 称为二叉搜索树
     /// </summary>
-    class BSTree<T> : BTree<IndexNode<T>>
+    class BSTree<T> : BTree<T>
     {
         /// <summary>
         /// 在二叉搜索树中插入IndexNode

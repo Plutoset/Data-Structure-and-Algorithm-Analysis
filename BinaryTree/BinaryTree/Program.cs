@@ -8,7 +8,7 @@ namespace BinaryTree
         static void Main(string[] args)
         {
             // 用数组按完全二叉树规则存储数据元素
-            BCSTree<int> bCSTree = new BCSTree<int>();
+            BCTree<int> bCSTree = new BCTree<int>();
             IndexNode<int> bNode1 = new IndexNode<int>(1,31);
             IndexNode<int> bNode2 = new IndexNode<int>(2,23);
             IndexNode<int> bNode3 = new IndexNode<int>(3,12);
@@ -24,6 +24,7 @@ namespace BinaryTree
             int depth = bCSTree.Depth();
             List<BNode<IndexNode<int>>> biNodes = bCSTree.ToQuene();
             bCSTree.ToBTree();
+            bCSTree.OrderInsert(bNode9);
             ////测试二叉查找树
             //BSTree<int> bSTree = new BSTree<int>();
             //IndexNode<int> node1 = new IndexNode<int>(7, 3);
