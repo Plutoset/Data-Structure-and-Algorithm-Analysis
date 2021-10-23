@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace BinaryTree
 {
+    /// <summary>
+    /// 一颗普通的树，储存节点
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     class BTree<T>
     {
         public BNode<IndexNode<T>> Head { get; set; }
