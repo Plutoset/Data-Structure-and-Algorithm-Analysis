@@ -41,32 +41,75 @@ namespace BinaryTree
         {
             return bNode.RChild;
         }
-        public BNode<IndexNode<T>> Find(T data, BNode<IndexNode<T>> nowNode = null)
+        public void Find(T data, ref BNode<IndexNode<T>> bNode, ref int nowDepth, ref bool ahead)
         {
-            if (nowNode == null)
+            if (ahead)
             {
-                nowNode = Head;
+                BNode<IndexNode<T>> lNode = bNode.LChild;
+                BNode<IndexNode<T>> rNode = bNode.RChild;
+                if (IsLeaf(lNode) == true && IsLeaf(rNode)== true)
+                {
+                    if (lNode.Data.Data.Equals(data))
+                    {
+                        bNode = lNode;
+                        ahead = false;
+                        return;
+                    }
+                    else if (rNode.Data.Data.Equals(data))
+                    {
+                        bNode = lNode;
+                        ahead = false;
+                        return;
+                    }
+                }
+                else
+                {
+                    if (bNode.Data.Data.Equals(data))
+                    {
+                        ahead = false;
+                        return;
+                    }
+                    nowDepth++;
+                    Find(data, ref lNode, ref nowDepth, ref ahead);
+                    if (ahead)//插入了就停
+                    { Find(data, ref rNode, ref nowDepth, ref ahead); }
+                }
             }
-            if (nowNode == null)
-            {
-                Console.WriteLine("Binary Tree empty.");
-                return null;
-            }
-            if (!nowNode.Data.Equals(data))
-            {
-                return nowNode;
-            }
-            if (nowNode.LChild != null)
-            {
-                return Find(data, nowNode.LChild);
-            }
-            if (nowNode.RChild != null)
-            {
-                return Find(data, nowNode.RChild);
-            }
-            return null;
         }
-        public bool IsLeaf(BNode<T> bNode)
+        public void FindParent(T data, ref BNode<IndexNode<T>> bNode, ref bool ahead)
+        {
+            if (ahead)
+            {
+                
+                BNode<IndexNode<T>> lNode = bNode.LChild;
+                BNode<IndexNode<T>> rNode = bNode.RChild;
+                if (lNode.Data.Data.Equals(data) || rNode.Data.Data.Equals(data))
+                {
+                    ahead = false;
+                    return;
+                }
+                if (IsLeaf(lNode) != true || IsLeaf(rNode) != true)
+                {
+                    FindParent(data, ref lNode,  ref ahead);
+                    if (ahead)//插入了就停
+                    { FindParent(data, ref rNode, ref ahead); }
+                }
+            }
+        }
+        public BNode<IndexNode<T>> Find(IndexNode<T> indexNode)
+        {
+            T data = indexNode.Data;
+            BNode<IndexNode<T>> nowNode = Head;
+            int nowDepth = 1;
+            bool ahead = true;
+            Find(data, ref nowNode, ref nowDepth,ref ahead);
+            if (!nowNode.Data.Data.Equals(data))
+            {
+                throw new Exception("No such element in Binary Tree!");
+            }
+            return nowNode;
+        }
+        public bool IsLeaf(BNode<IndexNode<T>> bNode)
         {
             return (bNode != null) && (bNode.RChild == null) && (bNode.LChild == null);
         }
@@ -206,6 +249,11 @@ namespace BinaryTree
         {
             int loopKey = bNode.Key;
             BNode<IndexNode<T>> iNode = new BNode<IndexNode<T>>(bNode);
+            if (loopKey == 1)
+            {
+                Head = iNode;
+                return;
+            }
             List<int> mod = new List<int>();
             List<int> log = new List<int>();
             while (loopKey != 1)
@@ -233,6 +281,48 @@ namespace BinaryTree
             else
             {
                 currentNode.LChild = iNode;
+            }
+        }
+        public void Delete(IndexNode<T> bNode)
+        {
+            BNode<IndexNode<T>> nowNode = Find(bNode);
+            bool ahead = true;
+            FindParent(bNode.Data, ref nowNode, ref ahead);
+            if (IsLeaf(nowNode))
+            {
+                if (nowNode.LChild.Data.Data.Equals(bNode.Data))
+                {
+                    nowNode.LChild = null;
+                }
+                else if (nowNode.RChild.Data.Data.Equals(bNode.Data))
+                {
+                    nowNode.RChild = null;
+                }
+            }
+            else
+            {
+                if (nowNode.LChild.Data.Data.Equals(bNode.Data))
+                {
+                    if (nowNode.LChild.LChild != null && nowNode.LChild.RChild != null)
+                    {
+
+                    }
+                    else
+                    {
+                        nowNode.LChild = nowNode.LChild.LChild != null ? nowNode.LChild.LChild : nowNode.LChild.RChild;
+                    }
+                }
+                else
+                {
+                    if (nowNode.RChild.LChild != null && nowNode.RChild.RChild != null)
+                    {
+
+                    }
+                    else
+                    {
+                        nowNode.RChild = nowNode.RChild.LChild != null ? nowNode.RChild.LChild : nowNode.RChild.RChild;
+                    }
+                }
             }
         }
     }

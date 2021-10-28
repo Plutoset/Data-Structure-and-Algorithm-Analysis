@@ -23,8 +23,8 @@ namespace BinaryTree
             bCSTree.InQuene(bNodes);
             int depth = bCSTree.Depth();
             List<BNode<IndexNode<int>>> biNodes = bCSTree.ToQuene();
-            bCSTree.ToBTree();
-            bCSTree.OrderInsert(bNode9);
+            BTree<int> bTree =  bCSTree.ToBTree();
+            bTree.Find(bNode9);
             ////测试二叉查找树
             //BSTree<int> bSTree = new BSTree<int>();
             //IndexNode<int> node1 = new IndexNode<int>(7, 3);
