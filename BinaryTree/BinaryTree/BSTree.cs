@@ -82,5 +82,83 @@ namespace BinaryTree
                 }
             }
         }
+        public void Delete(IndexNode<T> bNode)
+        {
+            BNode<IndexNode<T>> nowNode = Find(bNode);
+            if (Head == nowNode)
+            {
+                if (nowNode.LChild != null && nowNode.RChild != null)
+                {
+                    IndexNode<T> indexNode = DeleteSingleLeaf(Head, true);
+                    Head.Data = indexNode;
+                }
+                else
+                {
+                    Head = nowNode.LChild ?? nowNode.RChild;
+                }
+            }
+            else
+            {
+                bool ahead = true;
+                FindParent(bNode.Data, ref nowNode, ref ahead);
+                if (IsLeaf(nowNode))
+                {
+                    if (nowNode.LChild.Data.Data.Equals(bNode.Data))
+                    {
+                        nowNode.LChild = null;
+                    }
+                    else if (nowNode.RChild.Data.Data.Equals(bNode.Data))
+                    {
+                        nowNode.RChild = null;
+                    }
+                }
+                else
+                {
+                    ahead = true;
+                    IndexNode<T> indexNode = DeleteSingleLeaf(nowNode, true);
+                    nowNode.Data = indexNode;
+                }
+            }
+        }
+        public IndexNode<T> DeleteSingleLeaf(BNode<IndexNode<T>> bNode, bool ahead)
+        {
+            if(ahead)//从左节点开始找右节点
+            {
+                BNode<IndexNode<T>> lNode = bNode.LChild;
+                if (lNode.RChild == null)
+                {
+                    IndexNode<T> data = lNode.Data;
+                    bNode.LChild = lNode.LChild;
+                    return data;
+                }
+                bNode = lNode;
+                while (lNode.RChild.RChild != null)
+                {
+                    bNode = lNode;
+                    lNode = lNode.RChild;
+                }
+                lNode.RChild = lNode.RChild.LChild;
+                return lNode.RChild.Data;
+            }
+            else
+            {
+                BNode<IndexNode<T>> rNode = bNode.RChild;
+                if (rNode.LChild == null)
+                {
+                    IndexNode<T> data = rNode.Data;
+                    bNode.RChild = rNode.RChild;
+                    return data;
+                }
+                bNode = rNode;
+                while (rNode.LChild.LChild != null)
+                {
+                    bNode = rNode;
+                    rNode = rNode.LChild;
+                }
+                rNode.LChild = rNode.LChild.RChild;
+                return rNode.LChild.Data;
+            }
+
+        }
     }
 }
