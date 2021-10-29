@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BinaryTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,46 +42,39 @@ namespace BinaryTree
         {
             return bNode.RChild;
         }
-        public void Find(T data, ref BNode<IndexNode<T>> bNode, ref int nowDepth, ref bool ahead)
+
+        public BNode<IndexNode<T>> Find(T data, BNode<IndexNode<T>> nowNode)
         {
-            if (ahead)
+            while (!nowNode.Data.Data.Equals(data))
             {
-                BNode<IndexNode<T>> lNode = bNode.LChild;
-                BNode<IndexNode<T>> rNode = bNode.RChild;
-                if (IsLeaf(lNode) == true && IsLeaf(rNode)== true)
+                BNode<IndexNode<T>> lNode = nowNode.LChild;
+                BNode<IndexNode<T>> rNode = nowNode.RChild;
+                if (IsLeaf(lNode) == true && IsLeaf(rNode) == true)
                 {
                     if (lNode.Data.Data.Equals(data))
                     {
-                        bNode = lNode;
-                        ahead = false;
-                        return;
+                        nowNode = lNode;
+                        break;
                     }
                     else if (rNode.Data.Data.Equals(data))
                     {
-                        bNode = lNode;
-                        ahead = false;
-                        return;
+                        nowNode = rNode;
+                        break;
                     }
                 }
-                else
+                nowNode = Find(data, lNode);
+                if (!nowNode.Data.Data.Equals(data))
                 {
-                    if (bNode.Data.Data.Equals(data))
-                    {
-                        ahead = false;
-                        return;
-                    }
-                    nowDepth++;
-                    Find(data, ref lNode, ref nowDepth, ref ahead);
-                    if (ahead)//插入了就停
-                    { Find(data, ref rNode, ref nowDepth, ref ahead); }
+                    nowNode = Find(data, rNode);
                 }
             }
+            return nowNode;
         }
         public void FindParent(T data, ref BNode<IndexNode<T>> bNode, ref bool ahead)
         {
             if (ahead)
             {
-                
+
                 BNode<IndexNode<T>> lNode = bNode.LChild;
                 BNode<IndexNode<T>> rNode = bNode.RChild;
                 if (lNode.Data.Data.Equals(data) || rNode.Data.Data.Equals(data))
@@ -90,7 +84,7 @@ namespace BinaryTree
                 }
                 if (IsLeaf(lNode) != true || IsLeaf(rNode) != true)
                 {
-                    FindParent(data, ref lNode,  ref ahead);
+                    FindParent(data, ref lNode, ref ahead);
                     if (ahead)//插入了就停
                     { FindParent(data, ref rNode, ref ahead); }
                 }
@@ -100,9 +94,7 @@ namespace BinaryTree
         {
             T data = indexNode.Data;
             BNode<IndexNode<T>> nowNode = Head;
-            int nowDepth = 1;
-            bool ahead = true;
-            Find(data, ref nowNode, ref nowDepth,ref ahead);
+            nowNode = Find(data, Head);
             if (!nowNode.Data.Data.Equals(data))
             {
                 throw new Exception("No such element in Binary Tree!");
@@ -114,12 +106,18 @@ namespace BinaryTree
             return (bNode != null) && (bNode.RChild == null) && (bNode.LChild == null);
         }
 
-        public void TravelInOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
+        public List<BNode<IndexNode<T>>> TravelInOrder()
+        {
+            List<BNode<IndexNode<T>>> bNodes = new List<BNode<IndexNode<T>>>();
+            TravelInOrder(Head, ref bNodes);
+            return bNodes;
+        }
+        public void TravelInOrder(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
-                bNodes = new List<BNode<T>>();
+                bNodes = new List<BNode<IndexNode<T>>>();
                 return;
             }
             if (bNode != null)
@@ -130,12 +128,18 @@ namespace BinaryTree
                 TravelInOrder(bNode.RChild, ref bNodes);
             }
         }
-        public void TravelPreOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
+        public List<BNode<IndexNode<T>>> TravelPreOrder()
+        {
+            List<BNode<IndexNode<T>>> bNodes = new List<BNode<IndexNode<T>>>();
+            TravelPreOrder(Head, ref bNodes);
+            return bNodes;
+        }
+        public void TravelPreOrder(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
-                bNodes = new List<BNode<T>>();
+                bNodes = new List<BNode<IndexNode<T>>>();
                 return;
             }
             if (bNode != null)
@@ -146,12 +150,18 @@ namespace BinaryTree
                 TravelPreOrder(bNode.RChild, ref bNodes);
             }
         }
-        public void TravelPostOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
+        public List<BNode<IndexNode<T>>> TravelPostOrder()
+        {
+            List<BNode<IndexNode<T>>> bNodes = new List<BNode<IndexNode<T>>>();
+            TravelPostOrder(Head, ref bNodes);
+            return bNodes;
+        }
+        public void TravelPostOrder(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes)
         {
             if (IsEmpty())
             {
                 Console.WriteLine("Binary Tree empty. \n");
-                bNodes = new List<BNode<T>>();
+                bNodes = new List<BNode<IndexNode<T>>>();
                 return;
             }
             if (bNode != null)
@@ -162,14 +172,45 @@ namespace BinaryTree
                 bNodes.Add(bNode);
             }
         }
-
-        public void LevelOrder(BNode<T> bNode, ref List<BNode<T>> bNodes)
+        public List<BNode<IndexNode<T>>> LevelOrder()
         {
-            if (bNode == null)
+            List<BNode<IndexNode<T>>> bNodes = new List<BNode<IndexNode<T>>>();
+            List<BNode<IndexNode<T>>> quene = new List<BNode<IndexNode<T>>>() { Head };
+            LevelOrder(Head, ref bNodes,ref quene);
+            return bNodes;
+        }
+        public void LevelOrder(BNode<IndexNode<T>> bNode, ref List<BNode<IndexNode<T>>> bNodes, ref List<BNode<IndexNode<T>>> quene)
+        {
+            if (IsEmpty())
             {
+                Console.WriteLine("Binary Tree empty. \n");
+                bNodes = new List<BNode<IndexNode<T>>>();
                 return;
             }
-
+            if (bNode != null)
+            {
+                if (quene.Contains(bNode))
+                {
+                    if (bNode.LChild != null)
+                    {
+                        quene.Add(bNode.LChild);
+                    }
+                    if (bNode.RChild != null)
+                    {
+                        quene.Add(bNode.RChild);
+                    }
+                    bNodes.Add(bNode);
+                    quene.Remove(bNode);
+                }
+                if (!bNodes.Contains(bNode))
+                {
+                    bNodes.Add(bNode);
+                }
+                if (quene.Count != 0)
+                {
+                    LevelOrder(quene[0], ref bNodes, ref quene);
+                }
+            }
         }
 
         /// <summary>
@@ -224,7 +265,7 @@ namespace BinaryTree
             if (bNode != null)
             {
                 count++;
-                GetCount(bNode.LChild,ref count);
+                GetCount(bNode.LChild, ref count);
                 GetCount(bNode.RChild, ref count);
             }
         }
@@ -236,7 +277,7 @@ namespace BinaryTree
         {
             int depth = Depth();
             int count = Count();
-            if(count == Math.Pow(2, depth) - 1)
+            if (count == Math.Pow(2, depth) - 1)
             {
                 return true;
             }
@@ -281,48 +322,6 @@ namespace BinaryTree
             else
             {
                 currentNode.LChild = iNode;
-            }
-        }
-        public void Delete(IndexNode<T> bNode)
-        {
-            BNode<IndexNode<T>> nowNode = Find(bNode);
-            bool ahead = true;
-            FindParent(bNode.Data, ref nowNode, ref ahead);
-            if (IsLeaf(nowNode))
-            {
-                if (nowNode.LChild.Data.Data.Equals(bNode.Data))
-                {
-                    nowNode.LChild = null;
-                }
-                else if (nowNode.RChild.Data.Data.Equals(bNode.Data))
-                {
-                    nowNode.RChild = null;
-                }
-            }
-            else
-            {
-                if (nowNode.LChild.Data.Data.Equals(bNode.Data))
-                {
-                    if (nowNode.LChild.LChild != null && nowNode.LChild.RChild != null)
-                    {
-
-                    }
-                    else
-                    {
-                        nowNode.LChild = nowNode.LChild.LChild != null ? nowNode.LChild.LChild : nowNode.LChild.RChild;
-                    }
-                }
-                else
-                {
-                    if (nowNode.RChild.LChild != null && nowNode.RChild.RChild != null)
-                    {
-
-                    }
-                    else
-                    {
-                        nowNode.RChild = nowNode.RChild.LChild != null ? nowNode.RChild.LChild : nowNode.RChild.RChild;
-                    }
-                }
             }
         }
     }
