@@ -22,6 +22,8 @@ namespace QuadTree
             quadTree.AddNodes(list);
             List<QuadNode<string>> nlist = quadTree.GetChildren(quadTree.Root);
             List<QuadNode<string>> dlist = quadTree.Search(new Point(36, 80), 4);
+            FQuadTree<string> fQuadTree = new FQuadTree<string>();
+            QuadNode<string> neearestNode = quadTree.FindNearest(new Point(40, 79));
         }
     }
 }

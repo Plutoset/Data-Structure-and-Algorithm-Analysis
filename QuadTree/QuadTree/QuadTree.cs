@@ -166,11 +166,58 @@ namespace QuadTree
             }
             return quadNodes;
         }
+        public  QuadNode<T> Loop(Point position, ref double minDistance, QuadNode<T> quadNode, QuadNode<T> nowNode)
+        {
+            if (quadNode.NW != null)
+            {
+                if (quadNode.NW.DistanceTo(position) < minDistance)
+                {
+                    nowNode = quadNode.NW;
+                    minDistance = quadNode.NW.DistanceTo(position);
+                }
+                nowNode = Loop(position, ref minDistance, quadNode.NW, nowNode);
+            }
+            if (quadNode.NE != null)
+            {
+                if (quadNode.NE.DistanceTo(position) < minDistance)
+                {
+                    nowNode = quadNode.NE;
+                    minDistance = quadNode.NE.DistanceTo(position);
+                }
+                nowNode = Loop(position, ref minDistance, quadNode.NE, nowNode);
+            }
+            if (quadNode.SW != null)
+            {
+                if (quadNode.SW.DistanceTo(position) < minDistance)
+                {
+                    nowNode = quadNode.SW;
+                    minDistance = quadNode.SW.DistanceTo(position);
+                }
+                nowNode = Loop(position, ref minDistance, quadNode.SW, nowNode);
+            }
+            if (quadNode.SE != null)
+            {
+                if (quadNode.SE.DistanceTo(position) < minDistance)
+                {
+                    nowNode = quadNode.SE;
+                    minDistance = quadNode.SE.DistanceTo(position);
+                }
+                nowNode = Loop(position, ref minDistance, quadNode.SE, nowNode);
+            }
+            return nowNode;
+        }
         public List<QuadNode<T>> Search(Point position, double d)
         {
             List<QuadNode<T>> quadNodes = new List<QuadNode<T>>();
             quadNodes = Loop(Root, quadNodes, position, d);
             return quadNodes;
+        }
+        public QuadNode<T> FindNearest(Point position)
+        {
+            QuadNode<T> nowNode = Root;
+            double distance = nowNode.DistanceTo(position);
+            nowNode = Loop(position, ref distance, nowNode, nowNode);
+            return nowNode;
         }
     }
 }

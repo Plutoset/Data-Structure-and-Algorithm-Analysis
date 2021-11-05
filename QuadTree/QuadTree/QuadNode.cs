@@ -19,5 +19,9 @@ namespace QuadTree
             this.Position = position;
             this.Value = value;
         }
+        public double DistanceTo(Point point)
+        {
+            return Math.Sqrt(Math.Pow(Position.X - point.X, 2) + Math.Pow(Position.Y - point.Y, 2));
+        }
     }
 }
