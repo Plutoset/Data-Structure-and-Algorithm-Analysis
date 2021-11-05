@@ -98,5 +98,79 @@ namespace QuadTree
         {
             return Root == null;
         }
+        public List<QuadNode<T>> GetChildren(QuadNode<T> quadNode)
+        {
+            List<QuadNode<T>> quadNodes = new List<QuadNode<T>> { quadNode };
+            quadNodes = Loop(quadNode, quadNodes);
+            return quadNodes;
+        }
+        public List<QuadNode<T>> Loop(QuadNode<T> quadNode, List<QuadNode<T>> quadNodes)
+        {
+
+            if (quadNode.NW != null)
+            {
+                quadNodes.Add(quadNode.NW);
+                quadNodes = Loop(quadNode.NW, quadNodes);
+            }
+            if (quadNode.NE != null)
+            {
+                quadNodes.Add(quadNode.NE);
+                quadNodes = Loop(quadNode.NE, quadNodes);
+            }
+            if (quadNode.SW != null)
+            {
+                quadNodes.Add(quadNode.SW);
+                quadNodes = Loop(quadNode.SW, quadNodes);
+            }
+            if (quadNode.SE != null)
+            {
+                quadNodes.Add(quadNode.SE);
+                quadNodes = Loop(quadNode.SE, quadNodes);
+            }
+            return quadNodes;
+        }
+        public List<QuadNode<T>> Loop(QuadNode<T> quadNode, List<QuadNode<T>> quadNodes, Point position, double d)
+        {
+
+            if (quadNode.NW != null)
+            {
+                if(quadNode.NW.Position.Distance(position, d))
+                {
+                    quadNodes.Add(quadNode.NW);
+                }
+                quadNodes = Loop(quadNode.NW, quadNodes, position, d);
+            }
+            if (quadNode.NE != null)
+            {
+                if (quadNode.NE.Position.Distance(position, d))
+                {
+                    quadNodes.Add(quadNode.NE);
+                }
+                quadNodes = Loop(quadNode.NE, quadNodes, position, d);
+            }
+            if (quadNode.SW != null)
+            {
+                if (quadNode.SW.Position.Distance(position, d))
+                {
+                    quadNodes.Add(quadNode.SW);
+                }
+                quadNodes = Loop(quadNode.SW, quadNodes, position, d);
+            }
+            if (quadNode.SE != null)
+            {
+                if (quadNode.SE.Position.Distance(position, d))
+                {
+                    quadNodes.Add(quadNode.SE);
+                }
+                quadNodes = Loop(quadNode.SE, quadNodes, position, d);
+            }
+            return quadNodes;
+        }
+        public List<QuadNode<T>> Search(Point position, double d)
+        {
+            List<QuadNode<T>> quadNodes = new List<QuadNode<T>>();
+            quadNodes = Loop(Root, quadNodes, position, d);
+            return quadNodes;
+        }
     }
 }

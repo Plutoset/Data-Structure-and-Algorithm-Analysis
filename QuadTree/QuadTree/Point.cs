@@ -19,6 +19,13 @@ namespace QuadTree
                 Math.Pow(point1.Y - point2.Y, 2));
             return distance;
         }
+        public bool Distance(Point point, double d)
+        {
+            double distance = Math.Sqrt(
+                Math.Pow(X - point.X, 2) +
+                Math.Pow(Y - point.Y, 2));
+            return distance < d;
+        }
         public static double ManhanttanDistance(Point point1, Point point2)
         {
             double distance = (

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace QuadTree
 {
@@ -16,6 +17,11 @@ namespace QuadTree
             QuadNode<string> node8 = new QuadNode<string>(new Point(41, 81), "Cleveland");
             QuadNode<string> node9 = new QuadNode<string>(new Point(39, 84), "Dayton");
             QuadNode<string> node10 = new QuadNode<string>(new Point(45, 73), "Montreal");
+            List<QuadNode<string>> list = new List<QuadNode<string>> { node1, node2, node3, node4, node5, node6, node7, node8, node9, node10 };
+            QuadTree<string> quadTree = new QuadTree<string>();
+            quadTree.AddNodes(list);
+            List<QuadNode<string>> nlist = quadTree.GetChildren(quadTree.Root);
+            List<QuadNode<string>> dlist = quadTree.Search(new Point(36, 80), 4);
         }
     }
 }
