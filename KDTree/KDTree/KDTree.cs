@@ -36,7 +36,7 @@ namespace KDTree
                 return;
             }
             KDTreeNode<T> nowNode = Root;
-            bool direction = true;//x轴true，y轴false
+            //x轴true，y轴false
             while(true)
             {
                 bool lr;
